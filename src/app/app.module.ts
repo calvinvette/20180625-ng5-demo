@@ -18,6 +18,7 @@ import { OrderTableComponent } from './order-table/order-table.component';
 import { ShippingTableComponent } from './shipping-table/shipping-table.component';
 import { ShippingViewComponent } from './shipping-view/shipping-view.component';
 import { OrderViewComponent } from './order-view/order-view.component';
+import {CustomerLocalStorageService} from './customer-local-storage-service/customer-local-storage.service';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,9 @@ import { OrderViewComponent } from './order-view/order-view.component';
     NgbModule.forRoot(),
     AppRouting
   ],
-  providers: [],
+  providers: [
+    {provide: 'CustomerStorageService', useClass: CustomerLocalStorageService}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,6 +1,8 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, Inject, OnInit} from '@angular/core';
 import {Customer} from '../models/Customer';
 import {CustomerViewComponent} from '../customer-view/customer-view.component';
+import {CustomerStorageService} from '../customer-storage.service';
+import {CustomerLocalStorageService} from '../customer-local-storage-service/customer-local-storage.service';
 
 @Component({
   selector: 'tt-customer-table',
@@ -12,8 +14,11 @@ export class CustomerTableComponent implements OnInit {
   private _selectedCustomer: Customer;
   private _customerSelectedEventSource: EventEmitter<Customer> = new EventEmitter<Customer>();
 
-  constructor() {
-    this._customers = CustomerViewComponent.getAllCustomers();
+  constructor(@Inject(CustomerLocalStorageService) private customerStorageService: CustomerStorageService) {
+    // this._customers = CustomerViewComponent.getAllCustomers();
+    this.customerStorageService.findAll().subscribe(foundCustomers => {
+      this.customers = foundCustomers;
+    });
   }
 
   ngOnInit() {

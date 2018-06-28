@@ -39,7 +39,11 @@ export class CustomerViewComponent implements OnInit {
   }
 
   public static getCustomerByID(id: number) : Customer {
-    return CustomerViewComponent.customers[id.toString()];
+    if (id) {
+      return CustomerViewComponent.customers[id.toString()];
+    } else {
+      return null;
+    }
   }
 
   constructor(private formBuilder: FormBuilder, private router: ActivatedRoute) {
@@ -83,21 +87,21 @@ export class CustomerViewComponent implements OnInit {
       email : new FormControl(this.customer.email, [Validators.required, Validators.minLength(6), Validators.maxLength(128), Validators.email]),
       birthDate : new FormControl(this.customer.birthDate)
     });
-    console.log("FormBuilder: ");
-    console.log(this.formBuilder);
+    // console.log("FormBuilder: ");
+    // console.log(this.formBuilder);
   }
 
   onClick($event) {
-    console.log(this.customer.firstName + " was clicked.");
+    //console.log(this.customer.firstName + " was clicked.");
   }
 
   onHover($event) {
-    console.log(this.customer.firstName + " is being hovered over.");
+    // console.log(this.customer.firstName + " is being hovered over.");
   }
 
   onMouseOut($event) {
-    console.log("Left: " + this.customer.firstName + ": ");
-    console.log($event);
+    // console.log("Left: " + this.customer.firstName + ": ");
+    // console.log($event);
   }
 
   onDoubleClick($event) {

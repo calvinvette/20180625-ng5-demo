@@ -1,0 +1,16 @@
+<h1>
+  {{title}}
+</h1>
+
+<p>Welcome, {{firstName}}</p>
+<p>Your birth date is: {{birthDate}}</p>
+
+<div>
+  This page was rendered at {{now | date:'medium'}}
+</div>
+
+<table>
+  <tr *ngFor="let cust of customers">
+    <td><tt-customer-view [customerId]="cust.customerId"></tt-customer-view></td>
+  </tr>
+</table>

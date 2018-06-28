@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <th>shipmentId</th>
+    <th>shipDate</th>
+    <th>method</th>
+    <th>deliveryDate</th>
+  </tr>
+  <tr *ngFor="let shipment of shipments" (click)="selectShipment(shipment)">
+    <td>{{shipment.shipmentId}}</td>
+    <td>{{shipment.shipDate | date:'shortDate'}}</td>
+    <td>{{shipment.method}}</td>
+    <td>{{shipment.deliveryDate | date:'shortDate'}}</td>
+  </tr>
+</table>

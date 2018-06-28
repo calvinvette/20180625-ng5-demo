@@ -1,0 +1,18 @@
+.customerView {
+  margin: 20px;
+  padding: 10px;
+}
+
+.underAge {
+  background-color: pink;
+}
+
+.overAge {
+  background-color: green;
+  color: white;
+}
+
+.has-error {
+  color: red;
+  background-color: lightgray;
+}

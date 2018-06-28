@@ -1,0 +1,215 @@
+<div class="container customerView" [class.underAge]="customer.age < 17" [class.overAge]="customer.age >= 17"
+     (click)="onClick($event)" (mouseover)="onHover($event)"
+    (dblclick)="state = 'edit'" (mouseout)="onMouseOut($event)"
+     *ngIf="state === 'view'"
+
+>
+  <div class="row">
+    <span class="col-md-4 col-xs-2">Customer ID:</span>
+    <span class="col-md-8 col-xs-2">{{ customer.customerId }}</span>
+  </div>
+  <div class="row">
+    <span class="col-md-4">First Name:</span>
+    <span class="col-md-6">{{ customer.firstName }}</span>
+  </div>
+  <div class="row">
+    <span class="col-md-4">Last Name:</span>
+    <span class="col-md-6">{{ customer.lastName }}</span>
+  </div>
+  <div class="row">
+    <span class="col-md-4">Phone Number:</span>
+    <span class="col-md-6">{{ customer.phoneNumber }}</span>
+  </div>
+  <div class="row">
+    <span class="col-md-4">Email:</span>
+    <span class="col-md-6">{{ customer.email }}</span>
+  </div>
+    <div class="row">
+      <span class="col-md-4">BirthDate:</span>
+      <span class="col-md-6">{{ customer.birthDate | date: 'fullDate' }}
+      <i class="fa fa-birthday-cake fa-lg" aria-hidden="true"></i>
+      <span class="sr-only">Birthday Calendar Control</span>
+    </span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">Age:</span>
+    <span class="col-md-6">{{ ageInYears() | number: "1.0-0" }} yrs, {{ customer.age % 1 * 12 | number: '1.0-0' }} mos</span>
+  </div>
+  <div class="row">
+    <span class="col-md-12" *ngIf="customer.age >= 17">This customer is an adult in the Wizarding community</span>
+    <span class="col-md-12"  *ngIf="customer.age < 17">This customer is NOT an adult in the Wizarding community</span>
+  </div>
+  <!-- Extra Fun
+
+  Home Address:<br/>
+  <tt-address-view [address]="customer.homeAddress"></tt-address-view>
+  Work Address:<br/>
+  <tt-address-view [address]="customer.workAddress"></tt-address-view>
+
+
+
+  <div class="row">
+      <span class="col-md-6">
+    <span class="badge badge-default">Default</span>
+    <span class="badge badge-primary">Primary</span>
+    <span class="badge badge-success">Success</span>
+    <span class="badge badge-info">Info</span>
+    <span class="badge badge-warning">Warning</span>
+    <span class="badge badge-danger">Error Message here</span>
+  </span>
+    <span class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+      Customer
+      </div>
+
+      <div class="card-block">
+        <h4 class="card-title">
+      {{customer.firstName}} {{customer.lastName}}
+    </h4>
+        <img alt="" src="assets/trivera.jpg" width="50%" height="50%">
+    <p class="card-text">{{customer.email}}</p>
+    <p class="card-text">{{customer.phoneNumber}}</p>
+      </div>
+
+      <div class="card-footer">
+      {{customer.birthDate}}
+      </div>
+    </div>
+   </span>
+  </div>
+  -->
+  <!--
+  -->
+</div>
+
+
+<div class="container customerView" *ngIf="state === 'edit'">
+  <span [class.alert-danger]="customerForm.invalid" [class.alert-success]="customerForm.valid">
+    {{ customerForm.status }}
+  </span>
+  <form [formGroup]="customerForm" (ngSubmit)="update()">
+    <div class="row">
+      <span class="col-md-6">Customer ID:</span>
+      <span class="col-md-6">{{ customer.customerId }}</span>
+    </div>
+    <div class="row form-group" [ngClass]="{'has-error': customerForm.get('firstName').invalid}">
+      <span class="col-md-6">First Name:</span>
+      <span class="col-md-6"><input formControlName="firstName"/></span>
+      <span [class.alert-danger]="customerForm.get('firstName').invalid" [class.alert-success]="customerForm.get('firstName').valid">
+          {{ customerForm.get('firstName').value }}
+          {{ customerForm.get('firstName').status }}
+          <ul *ngIf="customerForm.get('firstName').errors" class="alert-danger">
+            <li *ngIf="customerForm.get('firstName').errors.required">The field is required.</li>
+            <li *ngIf="customerForm.get('firstName').errors.minlength">The field must be at least 2 characters long.</li>
+            <li *ngIf="customerForm.get('firstName').errors.maxlength">The field must be at most 25 characters long.</li>
+            <li *ngIf="customerForm.get('firstName').errors.pattern">The field must be letters, numbers, hyphens, apostrophes or spaces.</li>
+          </ul>
+      </span>
+    </div>
+    <div class="row form-group" [ngClass]="{'has-error': customerForm.get('lastName').invalid}">
+      <span class="col-md-6">Last Name:</span>
+      <span class="col-md-6"><input formControlName="lastName" maxlength="25"/></span>
+      <span [class.alert-danger]="customerForm.get('lastName').invalid" [class.alert-success]="customerForm.get('lastName').valid">
+          {{ customerForm.get('lastName').value }}
+          {{ customerForm.get('lastName').status }}
+          <ul *ngIf="customerForm.get('lastName').errors" class="alert-danger">
+            <li *ngIf="customerForm.get('lastName').errors.required">The field is required.</li>
+            <li *ngIf="customerForm.get('lastName').errors.minlength">The field must be at least 2 characters long.</li>
+            <li *ngIf="customerForm.get('lastName').errors.maxlength">The field must be at most 25 characters long.</li>
+            <li *ngIf="customerForm.get('lastName').errors.pattern">The field must be letters, numbers, hyphens, apostrophes or spaces.</li>
+          </ul>
+      </span>
+    </div>
+    <div class="row form-group" [ngClass]="{'has-error': customerForm.get('phoneNumber').invalid}">
+      <span class="col-md-6">Phone Number:</span>
+      <span class="col-md-6"><input formControlName="phoneNumber"/></span>
+      <span [class.alert-danger]="customerForm.get('phoneNumber').invalid" [class.alert-success]="customerForm.get('phoneNumber').valid">
+          {{ customerForm.get('phoneNumber').value }}
+          {{ customerForm.get('phoneNumber').status }}
+          <ul *ngIf="customerForm.get('phoneNumber').errors" class="alert-danger">
+            <li *ngIf="customerForm.get('phoneNumber').errors.pattern">The field must be numbers, hypens, plus-signs or spaces.</li>
+          </ul>
+      </span>
+    </div>
+    <div class="row form-group" [ngClass]="{'has-error': customerForm.get('email').invalid}">
+      <span class="col-md-6">Email:</span>
+      <span class="col-md-6"><input formControlName="email"/></span>
+      <span [class.alert-danger]="customerForm.get('email').invalid" [class.alert-success]="customerForm.get('email').valid">
+          {{ customerForm.get('email').value }}
+          {{ customerForm.get('email').status }}
+          <ul *ngIf="customerForm.get('email').errors" class="alert-danger">
+            <li *ngIf="customerForm.get('email').errors.required">The field is required.</li>
+            <li *ngIf="customerForm.get('email').errors.minlength">The field must be at least 6 characters long.</li>
+            <li *ngIf="customerForm.get('email').errors.maxlength">The field must be at most 128 characters long.</li>
+            <li *ngIf="customerForm.get('email').errors.pattern">The field must be a valid e-mail address.</li>
+          </ul>
+      </span>
+    </div>
+    <div class="row form-group" [ngClass]="{'has-error': customerForm.get('birthDate').invalid}">
+      <span class="col-md-6">BirthDate:</span>
+      <span class="col-md-6">
+        <input placeholder="yyyy-mm-dd" formControlName="birthDate" ngbDatepicker [minDate]="{year: 1979, month: 1, day:1}" [maxDate]="{year: 2025, month: 12, day: 31}" #d="ngbDatepicker" (blur)="d.close()" />
+        <div class="input-group-append" (click)="d.toggle()">
+          <i class="fa fa-calendar" aria-hidden="true"></i>
+        </div>
+      </span>
+      <span [class.alert-danger]="customerForm.get('birthDate').invalid" [class.alert-success]="customerForm.get('birthDate').valid">
+          {{ customerForm.get('birthDate').value }}
+          {{ customerForm.get('birthDate').status }}
+      </span>
+    </div>
+    <div class="row">
+      <button type="submit">Update Customer</button>
+    </div>
+  </form>
+</div>
+
+
+
+<!--
+<div class="container customerView" *ngIf="state === 'edit'">
+  <div class="row">
+    <span class="col-md-6">Customer ID:</span>
+    <span class="col-md-6">{{ customer.customerId }}</span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">First Name:</span>
+    <span class="col-md-6"><input [(ngModel)]="customer.firstName"/></span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">Last Name:</span>
+    <span class="col-md-6"><input [(ngModel)]="customer.lastName"/></span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">Phone Number:</span>
+    <span class="col-md-6"><input [(ngModel)]="customer.phoneNumber"/></span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">Email:</span>
+    <span class="col-md-6"><input [(ngModel)]="customer.email"/></span>
+  </div>
+  <div class="row">
+    <span class="col-md-6">Birth Date:</span>
+    <span class="col-md-6">
+      <input
+             ngbDatepicker #d="ngbDatepicker" (blur)="d.close()"
+             [(ngModel)] = 'customer.birthDate'
+             [minDate]="{ year: 1970, month: 1, date: 1}"
+             [maxDate]="{ year: 2020, month: 12, date: 31}"
+             placeholder="yyyy-mm-dd"
+      />
+      <! --
+      (ngModelChange)="bdChange(this, $event)"
+      -- >
+      <div class="input-group-append" (click)="d.toggle()">
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+        <span class="sr-only">Birthday Calendar Control</span>
+      </div>
+    </span>
+  </div>
+  <div class="row">
+    <span class="col-md-6"><button (click)="update()">Update</button></span>
+</div>
+</div>
+-->

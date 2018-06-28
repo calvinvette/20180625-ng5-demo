@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="row">
+    <span class="col-form-label col-md-3">Shipment ID</span>
+    <span class="col-md-6">{{shipment?.shipmentId}}</span>
+  </div>
+  <div class="row">
+    <span class="col-form-label col-md-3">Shipping Date</span>
+    <span class="col-md-6">{{shipment?.shipDate | date:'full'}}</span>
+  </div>
+  <div class="row">
+    <span class="col-form-label col-md-3">Shipment Method</span>
+    <span class="col-md-6">{{shipment?.method}}</span>
+  </div>
+  <div class="row">
+    <span class="col-form-label col-md-3">Delivery Date</span>
+    <span class="col-md-6">{{shipment?.deliveryDate | date:'fullDate'}}</span>
+  </div>
+</div>

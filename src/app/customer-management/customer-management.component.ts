@@ -15,6 +15,9 @@ export class CustomerManagementComponent implements OnInit {
   private _customerView: CustomerViewComponent;
   private _selectedCustomer: Customer;
 
+  private _showCustomerView: boolean = false;
+
+
   constructor() {
   }
 
@@ -25,6 +28,27 @@ export class CustomerManagementComponent implements OnInit {
       // this.selectedCustomer = selectedCustomer;
       this.customerView.customer = selectedCustomer;
     });
+    this.customerView.customerUpdatedEventSource.subscribe(customerUpdated => {
+      console.log("Customer Updated:");
+      console.log(customerUpdated);
+    });
+    this.customerView.customerAddedEventSource.subscribe(customerAdded => {
+      console.log("Customer Added:");
+      console.log(customerAdded);
+    });
+  }
+
+
+  public get showCustomerView(): boolean {
+    return this._showCustomerView;
+  }
+
+  public set showCustomerView(showCustomerView: boolean) {
+    this._showCustomerView = showCustomerView;
+  }
+
+  addCustomer() {
+    this.showCustomerView = true;
   }
 
   get customerTable(): CustomerTableComponent {

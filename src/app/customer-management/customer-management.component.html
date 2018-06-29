@@ -1,2 +1,15 @@
-<tt-customer-table></tt-customer-table>
-<tt-customer-view [customerId]="1234"></tt-customer-view>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2">
+      <button (click)="addCustomer()">Add Customer<i class="fa fa-plus"></i></button>
+    </div>
+    <div class="col-md-6">
+      <tt-customer-view *ngIf="showCustomerView" [state]="'add'" (addComplete)="showCustomerView = false"></tt-customer-view>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <tt-customer-table></tt-customer-table>
+    </div>
+  </div>
+</div>

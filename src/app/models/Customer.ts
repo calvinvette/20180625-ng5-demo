@@ -13,11 +13,11 @@ export class Customer implements Person {
   private _workAddress: Address;
 
   constructor(customerId: number = -1,
-              firstName: string,
+              firstName: string = '',
               middleName: string = '',
-              lastName: string,
-              email ?: string,
-              phoneNumber ?: string,
+              lastName: string = '',
+              email: string = '', // email?: string
+              phoneNumber: string = '',
               birthDate: Date = new Date()) {
     this.customerId = customerId;
     this._firstName = firstName;
@@ -105,7 +105,7 @@ export class Customer implements Person {
     this._workAddress = value;
   }
 
-  public get age() : number {
+  public get age(): number {
     /* JavaScript numbers are stored as 64-bit floating point values with a 52-bit mantissa,
        11-bit exponent, and 1-bit sign flag.
 
@@ -113,8 +113,8 @@ export class Customer implements Person {
        Because of that, Angular would think that it is constantly changing.  Since we are calculating an AGE,
        we will clear the lower bits that represent the time within the day.
     */
-    const millisecondsPerDay : number = 1000 * 3600 * 24;
-    const now : number = Math.round(new Date().getTime() / millisecondsPerDay) * millisecondsPerDay;
+    const millisecondsPerDay: number = 1000 * 3600 * 24;
+    const now: number = Math.round(new Date().getTime() / millisecondsPerDay) * millisecondsPerDay;
 
     return (now - this.birthDate.getTime()) / (1000 * 3600 * 24 * 365.25);
   }

@@ -1,10 +1,11 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, EventEmitter} from '@angular/core';
 import {Customer} from '../models/Customer';
 import {Address} from '../models/Address';
 import {NgbDateAdapter} from '@ng-bootstrap/ng-bootstrap';
 import {MyDateAdapter} from './MyDateAdapter';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
+import {CustomerStorageService, CustomerStorageServiceImpl} from '../services/customer-storage.service';
 
 @Component({
   selector: 'tt-customer-view',
@@ -17,78 +18,87 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class CustomerViewComponent implements OnInit {
 
-  private _customer: Customer;
+  private _customer: Customer = new Customer();
 
   private _customerId: number = -1;
 
-  private _state: string = "view";
+  private _state: string = 'view';
 
   private _customerForm: FormGroup;
 
-  private static customers: { [key: string]: Customer; } = {
-    '1234': new Customer(1234, 'Harry', 'James', 'Potter', 'harry.potter@hogwarts.ac.uk', '+44 0206-931-9185'),
-    '1235': new Customer(1235, 'Ron', 'Bilius', 'Weasley', 'ron.weasley@hogwarts.ac.uk', '+44 0206-931-9181'),
-    '1236': new Customer(1236, 'Hermione', 'Jean', 'Granger', 'hermoine.granger@hogwarts.ac.uk', '+44 0206-931-9182')
-  };
+  // private static customers: { [key: string]: Customer; } = {
+  //   '1234': new Customer(1234, 'Harry', 'James', 'Potter', 'harry.potter@hogwarts.ac.uk', '+44 0206-931-9185'),
+  //   '1235': new Customer(1235, 'Ron', 'Bilius', 'Weasley', 'ron.weasley@hogwarts.ac.uk', '+44 0206-931-9181'),
+  //   '1236': new Customer(1236, 'Hermione', 'Jean', 'Granger', 'hermoine.granger@hogwarts.ac.uk', '+44 0206-931-9182')
+  // };
+  //
+  //
+  // public static getAllCustomers(): Customer[] {
+  //   let custArray : Customer[] = [];
+  //   Object.keys(CustomerViewComponent.customers).forEach(key => custArray.push(CustomerViewComponent.customers[key]));
+  //   return custArray;
+  // }
+  //
+  // public static getCustomerByID(id: number) : Customer {
+  //   if (id) {
+  //     return CustomerViewComponent.customers[id.toString()];
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
-
-  public static getAllCustomers(): Customer[] {
-    let custArray : Customer[] = [];
-    Object.keys(CustomerViewComponent.customers).forEach(key => custArray.push(CustomerViewComponent.customers[key]));
-    return custArray;
-  }
-
-  public static getCustomerByID(id: number) : Customer {
-    if (id) {
-      return CustomerViewComponent.customers[id.toString()];
-    } else {
-      return null;
-    }
-  }
-
-  constructor(private formBuilder: FormBuilder, private router: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private router: ActivatedRoute,
+              private customerStorageService: CustomerStorageServiceImpl) {
     this.router.params.subscribe(params => {
       this.customerId = params['customerId'];
     });
     // this.customer = new Customer(1234, "XXX", "YYY", "xxx.yy@hogwarts.ac.uk", "+44 0206-931-9185");
     //  this.customer = CustomerViewComponent.customers[this.customerId];
-    //for (let custKeyf CustomerViewComponent.getAllCustomers()) {
-      // CustomerViewComponent.getCustomerByID(parseInt(custKey, 10)).homeAddress = new Address(
-      //   -1,
-      //   "#4 Privet Drive",
-      //   "Cupboard under the stair",
-      //   "(no line 3)",
-      //   "Little Whinging",
-      //   "Surrey",
-      //   "United Kingdom",
-      //   "EN314591"
-      // );
-      // CustomerViewComponent.getCustomerByID(parseInt(custKey, 10)).workAddress = new Address(
-      //   -1,
-      //   "#1234 Work",
-      //   "(no line 2)",
-      //   "(no line 3)",
-      //   "Little Whinging",
-      //   "Surrey",
-      //   "United Kingdom",
-      //   "EN314591"
-      // );
+    //for (let custKey CustomerViewComponent.getAllCustomers()) {
+    // CustomerViewComponent.getCustomerByID(parseInt(custKey, 10)).homeAddress = new Address(
+    //   -1,
+    //   "#4 Privet Drive",
+    //   "Cupboard under the stair",
+    //   "(no line 3)",
+    //   "Little Whinging",
+    //   "Surrey",
+    //   "United Kingdom",
+    //   "EN314591"
+    // );
+    // CustomerViewComponent.getCustomerByID(parseInt(custKey, 10)).workAddress = new Address(
+    //   -1,
+    //   "#1234 Work",
+    //   "(no line 2)",
+    //   "(no line 3)",
+    //   "Little Whinging",
+    //   "Surrey",
+    //   "United Kingdom",
+    //   "EN314591"
+    // );
     //   console.log(parseInt(custKey, 10));
     // }
   }
 
   // Post-constructor call
   ngOnInit() {
-    this.customer = CustomerViewComponent.getCustomerByID(this.customerId);
-    this._customerForm = this.formBuilder.group({
-      firstName : new FormControl(this.customer.firstName, [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern("[A-Za-z\\'\\- 0-9]*")]),
-      lastName : new FormControl(this.customer.lastName, [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern("[A-Za-z\\'\\- 0-9]*")]),
-      phoneNumber : new FormControl(this.customer.phoneNumber, [Validators.pattern("[+\\- 0-9]*")]),
-      email : new FormControl(this.customer.email, [Validators.required, Validators.minLength(6), Validators.maxLength(128), Validators.email]),
-      birthDate : new FormControl(this.customer.birthDate)
+    this.customerStorageService.findById(this.customerId).subscribe(found => {
+      this.customer = found;
+      this.resetForm();
     });
     // console.log("FormBuilder: ");
     // console.log(this.formBuilder);
+  }
+
+  resetForm() {
+    if (this.customer) {
+      this._customerForm = this.formBuilder.group({
+        firstName: new FormControl(this.customer.firstName, [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern('[A-Za-z\\\'\\- 0-9]*')]),
+        lastName: new FormControl(this.customer.lastName, [Validators.required, Validators.minLength(2), Validators.maxLength(25), Validators.pattern('[A-Za-z\\\'\\- 0-9]*')]),
+        phoneNumber: new FormControl(this.customer.phoneNumber, [Validators.pattern('[+\\- 0-9]*')]),
+        email: new FormControl(this.customer.email, [Validators.required, Validators.minLength(6), Validators.maxLength(128), Validators.email]),
+        birthDate: new FormControl(this.customer.birthDate)
+      });
+    }
   }
 
   onClick($event) {
@@ -105,23 +115,83 @@ export class CustomerViewComponent implements OnInit {
   }
 
   onDoubleClick($event) {
-    console.log("Double-Clicked: " + this.customer.firstName + ": ");
+    console.log('Double-Clicked: ' + this.customer.firstName + ': ');
     console.log($event);
   }
 
-  update() {
-    if (this.customerForm.valid) {
-      this.customer.firstName = this.customerForm.get('firstName').value;
-      this.customer.lastName = this.customerForm.get('lastName').value;
-      this.customer.phoneNumber = this.customerForm.get('phoneNumber').value;
-      this.customer.email = this.customerForm.get('email').value;
-      this.customer.birthDate = this.customerForm.get("birthDate").value;
+  private extractCustomerFromForm() {
+    this.customer.firstName = this.customerForm.get('firstName').value;
+    this.customer.lastName = this.customerForm.get('lastName').value;
+    this.customer.phoneNumber = this.customerForm.get('phoneNumber').value;
+    this.customer.email = this.customerForm.get('email').value;
+    this.customer.birthDate = this.customerForm.get('birthDate').value;
+  }
 
-      this.state = 'view';
+  // "Design Patterns: Elements of OO Reusable Software"
+  // Gang of Four (GoF) Template pattern
+  private processForm(action: () => void) {
+    if (this.customerForm.valid) {
+      this.extractCustomerFromForm();
+      action();
+      // housekeeping; cleanup; tx commit/rollback; connection closing
     }
   }
 
-  ageInYears() : number {
+  public customerUpdatedEventSource: EventEmitter<Customer> = new EventEmitter<Customer>();
+  public customerAddedEventSource: EventEmitter<Customer> = new EventEmitter<Customer>();
+
+  private update() {
+    this.processForm(() => {
+
+      this.customerStorageService.update(this.customer).subscribe(customerUpdated => {
+        this.customer = customerUpdated;
+        // this.state = 'view'; // we'll need this when we handle fail scenarios
+        this.customerUpdatedEventSource.emit(this.customer);
+        this.state = 'view';
+      });
+
+    });
+  }
+
+  private add() {
+    this.processForm(() => {
+
+      this.customerStorageService.insert(this.customer).subscribe(customer => {
+        this.customer = customer;
+        // this.state = 'view'; // we'll need this when we handle fail scenarios
+        this.customerAddedEventSource.emit(this.customer);
+        this.state = 'view';
+      });
+
+    });
+  }
+
+  private submit() {
+    if (this.state === 'edit') {
+      this.update();
+    }
+    else if (this.state === 'add') {
+      this.add();
+    }
+    else {
+      console.log('Invalid state: ' + this.state);
+    }
+  }
+
+
+  // update() {
+  //   if (this.customerForm.valid) {
+  //     this.customer.firstName = this.customerForm.get('firstName').value;
+  //     this.customer.lastName = this.customerForm.get('lastName').value;
+  //     this.customer.phoneNumber = this.customerForm.get('phoneNumber').value;
+  //     this.customer.email = this.customerForm.get('email').value;
+  //     this.customer.birthDate = this.customerForm.get("birthDate").value;
+  //
+  //     this.state = 'view';
+  //   }
+  // }
+
+  ageInYears(): number {
     return Math.floor(this.customer.age);
   }
 
@@ -155,6 +225,7 @@ export class CustomerViewComponent implements OnInit {
     return this._state;
   }
 
+  @Input()
   set state(value: string) {
     this._state = value;
   }

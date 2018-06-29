@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Customer} from '../models/Customer';
-import {AppComponent} from '../app.component';
-import {CustomerViewComponent} from '../customer-view/customer-view.component';
+import {CustomerStorageServiceImpl} from '../services/customer-storage.service';
 
 @Component({
   selector: 'tt-landing',
@@ -15,10 +14,14 @@ export class LandingComponent implements OnInit {
   private _birthDate: Date = new Date(1980, 6, 31);
   private _customers: Customer[] = [];
 
-  constructor() {
-    this._customers = CustomerViewComponent.getAllCustomers();
-    const earliestDate: Date = new Date(1980, 0, 1);
-    this.customers.forEach(customer => customer.birthDate = LandingComponent.randomDate(earliestDate));
+  constructor(private customerStorageService: CustomerStorageServiceImpl) {
+    // TODO - Fix Injection
+    // this.customerStorageService.findAll().subscribe(custs => {
+    //   this.customers = custs;
+    //   const earliestDate: Date = new Date(1980, 0, 1);
+    //   this.customers.forEach(customer => customer.birthDate = LandingComponent.randomDate(earliestDate));
+    //
+    // });
   }
 
   ngOnInit() {
@@ -64,5 +67,9 @@ export class LandingComponent implements OnInit {
 
   public get customers(): Customer[] {
     return this._customers;
+  }
+
+  public set customers(value: Customer[]) {
+    this._customers = value;
   }
 }
